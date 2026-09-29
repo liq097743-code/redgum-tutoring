@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>教师可用时间窗口</title>
+</head>
+<body>
+    <h2>{{tutor.name}} - 可用时段管理</h2>
+    <h3>新增可用时间</h3>
+    <form method="POST" action="{{ url_for('availability_new', tutor_id=tutor.id) }}">
+        <div>星期：<input type="text" name="weekday" placeholder="1‑7代表周一到周日" required></div>
+        <div>开始时间：<input type="time" name="start_time" required></div>
+        <div>结束时间：<input type="time" name="end_time" required></div>
+        <button type="submit">添加时段</button>
+    </form>
+
+    <h3>已配置可用时段</h3>
+    <table border="1">
+        <tr>
+            <th>星期</th>
+            <th>开始时间</th>
+            <th>结束时间</th>
+            <th>操作</th>
+        </tr>
+        {% for avail in tutor.availabilities %}
+        <tr>
+            <td>{{avail.weekday}}</td>
+            <td>{{avail.start_time}}</td>
+            <td>{{avail.end_time}}</td>
+            <td>
+                <form method="POST" action="{{ url_for('availability_delete', avail_id=avail.id) }}">
+                    <button type="submit">删除</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    <br>
+    <a href="{{ url_for('tutor_list') }}">返回教师列表</a>
+</body>
+</html>
