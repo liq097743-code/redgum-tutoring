@@ -93,5 +93,5 @@ def availability_delete(avail_id):
     return redirect(url_for("tutor_availability", tutor_id=tutor_id))
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":# review feedback: could add input validation
     app.run(debug=True)
