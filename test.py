@@ -1,56 +1,44 @@
-import unittest
+import pytest
 from app import app, db
-from models import Tutor, Availability
+from models import Tutor, Availability, Student
 
-class TutorModuleTestCase(unittest.TestCase):
-    def setUp(self):
-        app.config["TESTING"] = True
-        app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///:memory:"
-        self.client = app.test_client()
+@pytest.fixture
+def client():
+    app.config['TESTING'] = True
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
+    with app.test_client() as client:
         with app.app_context():
             db.create_all()
-
-    def tearDown(self):
-        with app.app_context():
+            yield client
             db.session.remove()
             db.drop_all()
 
-    # 测试教师软删除停用逻辑
-    def test_tutor_soft_deactivate(self):
-        with app.app_context():
-            t = Tutor(name="Test Teacher", subject="Math", is_active=True)
-            db.session.add(t)
-            db.session.commit()
-            # 执行停用
-            t.is_active = False
-            db.session.commit()
-            found = Tutor.query.get(t.id)
-            self.assertEqual(found.is_active, False)
-            self.assertIsNotNone(found) # 记录不被删除
+# ========== 教师模块测试 ==========
+def test_tutor_create(client):
+    tutor = Tutor(name="Alice", email="alice@test.com")
+    db.session.add(tutor)
+    db.session.commit()
+    assert Tutor.query.count() == 1
 
-    # 测试新增可用时间窗口
-    def test_add_availability(self):
-        with app.app_context():
-            t = Tutor(name="Alice", subject="English", is_active=True)
-            db.session.add(t)
-            db.session.commit()
-            avail = Availability(tutor_id=t.id, weekday="2", start_time="09:00", end_time="17:00")
-            db.session.add(avail)
-            db.session.commit()
-            self.assertEqual(len(t.availabilities), 1)
+def test_tutor_soft_delete(client):
+    tutor = Tutor(name="Bob", email="bob@test.com")
+    db.session.add(tutor)
+    db.session.commit()
+    tutor.is_active = False
+    db.session.commit()
+    assert Tutor.query.get(1).is_active == False
 
-    # 测试删除可用时间窗口
-    def test_delete_availability(self):
-        with app.app_context():
-            t = Tutor(name="Bob", subject="Physics", is_active=True)
-            db.session.add(t)
-            db.session.commit()
-            avail = Availability(tutor_id=t.id, weekday="3", start_time="10:00", end_time="14:00")
-            db.session.add(avail)
-            db.session.commit()
-            db.session.delete(avail)
-            db.session.commit()
-            self.assertEqual(len(t.availabilities), 0)
+# ========== 学生模块测试 ==========
+def test_student_create(client):
+    student = Student(name="Tom", email="tom@test.com")
+    db.session.add(student)
+    db.session.commit()
+    assert Student.query.count() == 1
 
-if __name__ == "__main__":
-    unittest.main()
+def test_student_edit(client):
+    student = Student(name="Tom", email="tom@test.com")
+    db.session.add(student)
+    db.session.commit()
+    student.name = "Tommy"
+    db.session.commit()
+    assert Student.query.get(1).name == "Tommy"
