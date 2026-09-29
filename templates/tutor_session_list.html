@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tutor's Sessions</title>
+</head>
+<body>
+    <h1>Tutor Session Schedule</h1>
+    <table border="1">
+        <tr>
+            <th>Date</th>
+            <th>Start Time</th>
+            <th>Duration</th>
+            <th>Student ID</th>
+            <th>Status</th>
+        </tr>
+        {% for sess in sessions %}
+        <tr>
+            <td>{{sess.session_date}}</td>
+            <td>{{sess.start_time}}</td>
+            <td>{{sess.duration_minutes}}</td>
+            <td>{{sess.student_id}}</td>
+            <td>{{sess.status}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
