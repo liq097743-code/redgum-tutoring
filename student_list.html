@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student List</title>
+</head>
+<body>
+    <h1>Student Management</h1>
+    <a href="{{url_for('student.student_create')}}">Add New Student</a>
+    <table border="1">
+        <tr>
+            <th>Name</th>
+            <th>Grade</th>
+            <th>Family Contact</th>
+            <th>Status</th>
+            <th>Action</th>
+        </tr>
+        {% for s in students %}
+        <tr>
+            <td>{{s.full_name}}</td>
+            <td>{{s.grade}}</td>
+            <td>{{s.family_contact}}</td>
+            <td>{{"Active" if s.is_active else "Deactivated"}}</td>
+            <td>
+                <a href="{{url_for('student.student_edit', sid=s.id)}}">Edit</a>
+                {% if s.is_active %}
+                <form method="POST" action="{{url_for('student.student_deactivate', sid=s.id)}}" style="display:inline">
+                    <button type="submit">Deactivate</button>
+                </form>
+                {% endif %}
+            </td>
+        </tr>
+    </table>
+</body>
+</html>
