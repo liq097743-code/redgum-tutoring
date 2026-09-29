@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create Tutoring Session</title>
+</head>
+<body>
+    <h1>Book New Tutoring Session</h1>
+    <form method="POST">
+        <label>Student:</label>
+        <select name="student_id" required>
+            {% for s in students %}
+                <option value="{{s.id}}">{{s.name}}</option>
+            {% endfor %}
+        </select>
+        <br>
+        <label>Tutor:</label>
+        <select name="tutor_id" required>
+            {% for t in tutors %}
+                <option value="{{t.id}}">{{t.name}}</option>
+            {% endfor %}
+        </select>
+        <br>
+        <label>Session Date:</label>
+        <input type="date" name="session_date" required>
+        <br>
+        <label>Start Time (HH:MM):</label>
+        <input type="time" name="start_time" required>
+        <br>
+        <label>Duration(min):</label>
+        <input type="number" name="duration_minutes" required>
+        <br>
+        <input type="submit" value="Create Session">
+    </form>
+</body>
+</html>

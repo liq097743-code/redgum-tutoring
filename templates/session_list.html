@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>All Sessions</title>
+</head>
+<body>
+    <h1>Tutoring Session List</h1>
+    <a href="/session/new">Create New Session</a>
+    <table border="1">
+        <tr>
+            <th>ID</th>
+            <th>Student ID</th>
+            <th>Tutor ID</th>
+            <th>Date</th>
+            <th>Start Time</th>
+            <th>Duration</th>
+            <th>Status</th>
+            <th>Action</th>
+        </tr>
+        {% for sess in sessions %}
+        <tr>
+            <td>{{sess.id}}</td>
+            <td>{{sess.student_id}}</td>
+            <td>{{sess.tutor_id}}</td>
+            <td>{{sess.session_date}}</td>
+            <td>{{sess.start_time}}</td>
+            <td>{{sess.duration_minutes}}</td>
+            <td>{{sess.status}}</td>
+            <td>
+                {% if sess.status != 'cancelled' %}
+                <form method="POST" action="/session/{{sess.id}}/cancel">
+                    <input type="submit" value="Cancel">
+                </form>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
