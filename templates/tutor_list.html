@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tutor List</title>
+</head>
+<body>
+    <h1>教师管理列表</h1>
+    <a href="{{ url_for('tutor_new') }}">新增教师</a>
+    <table border="1">
+        <tr>
+            <th>ID</th>
+            <th>姓名</th>
+            <th>授课科目</th>
+            <th>状态</th>
+            <th>操作</th>
+        </tr>
+        {% for t in tutors %}
+        <tr>
+            <td>{{t.id}}</td>
+            <td>{{t.name}}</td>
+            <td>{{t.subject}}</td>
+            <td>{{ "启用" if t.is_active else "已停用" }}</td>
+            <td>
+                <a href="{{ url_for('tutor_edit', tutor_id=t.id) }}">编辑</a>
+                {% if t.is_active %}
+                <form method="POST" action="{{ url_for('tutor_deactivate', tutor_id=t.id) }}" style="display:inline;">
+                    <button type="submit">停用教师</button>
+                </form>
+                {% endif %}
+                <a href="{{ url_for('tutor_availability', tutor_id=t.id) }}">管理可用时间</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>教师表单</title>
+</head>
+<body>
+    <h2>{% if tutor %}编辑教师{% else %}新增教师{% endif %}</h2>
+    <form method="POST">
+        <div>姓名：<input type="text" name="name" value="{{tutor.name if tutor else ''}}" required></div>
+        <div>授课科目：<input type="text" name="subject" value="{{tutor.subject if tutor else ''}}" required></div>
+        <button type="submit">保存</button>
+    </form>
+    <a href="{{ url_for('tutor_list') }}">返回列表</a>
+</body>
+</html>
