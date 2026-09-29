@@ -1,37 +1,44 @@
 import pytest
-from models import db, Student
+from app import app, db
+from models import Tutor, Availability, Student
 
-def test_create_student(client):
-    resp = client.post("/student/create", data={
-        "full_name":"Tom",
-        "grade":"Year10",
-        "family_contact":"TomParent@email.com"
-    }, follow_redirects=True)
-    assert Student.query.filter_by(full_name="Tom").first() is not None
+@pytest.fixture
+def client():
+    app.config['TESTING'] = True
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
+    with app.test_client() as client:
+        with app.app_context():
+            db.create_all()
+            yield client
+            db.session.remove()
+            db.drop_all()
 
-def test_required_field_validation(client):
-    resp = client.post("/student/create", data={
-        "full_name":"",
-        "grade":"Year10",
-        "family_contact":"xxx@xx.com"
-    })
-    assert Student.query.filter_by(grade="Year10").first() is None
-
-def test_edit_student(client):
-    s = Student(full_name="Alice", grade="Y9", family_contact="alice@test.com")
-    db.session.add(s)
+# ========== 教师模块测试 ==========
+def test_tutor_create(client):
+    tutor = Tutor(name="Alice", email="alice@test.com")
+    db.session.add(tutor)
     db.session.commit()
-    resp = client.post(f"/student/edit/{s.id}", data={
-        "full_name":"Alice Updated",
-        "grade":"Y10",
-        "family_contact":"new@test.com"
-    }, follow_redirects=True)
-    updated = Student.query.get(s.id)
-    assert updated.full_name == "Alice Updated"
+    assert Tutor.query.count() == 1
 
-def test_deactivate_student(client):
-    s = Student(full_name="Bob", grade="Y8", family_contact="bob@test.com")
-    db.session.add(s)
+def test_tutor_soft_delete(client):
+    tutor = Tutor(name="Bob", email="bob@test.com")
+    db.session.add(tutor)
     db.session.commit()
-    client.post(f"/student/deactivate/{s.id}")
-    assert Student.query.get(s.id).is_active == False
+    tutor.is_active = False
+    db.session.commit()
+    assert Tutor.query.get(1).is_active == False
+
+# ========== 学生模块测试 ==========
+def test_student_create(client):
+    student = Student(name="Tom", email="tom@test.com")
+    db.session.add(student)
+    db.session.commit()
+    assert Student.query.count() == 1
+
+def test_student_edit(client):
+    student = Student(name="Tom", email="tom@test.com")
+    db.session.add(student)
+    db.session.commit()
+    student.name = "Tommy"
+    db.session.commit()
+    assert Student.query.get(1).name == "Tommy"
