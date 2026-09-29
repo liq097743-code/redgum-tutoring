@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Daily Schedule</title>
+</head>
+<body>
+    <h1>Daily Schedule for {{selected_date}}</h1>
+    <table border="1">
+        <tr>
+            <th>Session ID</th>
+            <th>Tutor ID</th>
+            <th>Student ID</th>
+            <th>Start Time</th>
+            <th>Duration</th>
+            <th>Status</th>
+        </tr>
+        {% for sess in sessions %}
+        <tr>
+            <td>{{sess.id}}</td>
+            <td>{{sess.tutor_id}}</td>
+            <td>{{sess.student_id}}</td>
+            <td>{{sess.start_time}}</td>
+            <td>{{sess.duration_minutes}}</td>
+            <td>{{sess.status}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
